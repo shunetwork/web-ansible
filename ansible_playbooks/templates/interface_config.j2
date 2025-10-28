@@ -1,0 +1,27 @@
+{# 接口配置模板 #}
+interface {{ interface_name }}
+{% if description %}
+ description {{ description }}
+{% endif %}
+{% if ip_address and subnet_mask %}
+ ip address {{ ip_address }} {{ subnet_mask }}
+{% endif %}
+{% if vlan %}
+ switchport access vlan {{ vlan }}
+{% endif %}
+{% if trunk_allowed_vlans %}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ trunk_allowed_vlans }}
+{% endif %}
+{% if speed %}
+ speed {{ speed }}
+{% endif %}
+{% if duplex %}
+ duplex {{ duplex }}
+{% endif %}
+{% if shutdown %}
+ shutdown
+{% else %}
+ no shutdown
+{% endif %}
+

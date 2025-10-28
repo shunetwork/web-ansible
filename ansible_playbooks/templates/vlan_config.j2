@@ -1,0 +1,22 @@
+{# VLAN 配置模板 #}
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+{% if vlan.name %}
+ name {{ vlan.name }}
+{% endif %}
+{% endfor %}
+
+{% if svi_interfaces %}
+{# SVI 接口配置 #}
+{% for svi in svi_interfaces %}
+interface Vlan{{ svi.vlan_id }}
+{% if svi.description %}
+ description {{ svi.description }}
+{% endif %}
+ ip address {{ svi.ip_address }} {{ svi.subnet_mask }}
+{% if not svi.shutdown | default(false) %}
+ no shutdown
+{% endif %}
+{% endfor %}
+{% endif %}
+

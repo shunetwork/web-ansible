@@ -1,0 +1,51 @@
+{# 路由配置模板 #}
+{% if routing_protocol == 'ospf' %}
+{# OSPF 配置 #}
+router ospf {{ process_id }}
+{% if router_id %}
+ router-id {{ router_id }}
+{% endif %}
+{% for network in networks %}
+ network {{ network.network }} {{ network.wildcard }} area {{ network.area }}
+{% endfor %}
+{% if passive_interfaces %}
+{% for interface in passive_interfaces %}
+ passive-interface {{ interface }}
+{% endfor %}
+{% endif %}
+
+{% elif routing_protocol == 'eigrp' %}
+{# EIGRP 配置 #}
+router eigrp {{ as_number }}
+{% for network in networks %}
+ network {{ network }}
+{% endfor %}
+{% if passive_interfaces %}
+{% for interface in passive_interfaces %}
+ passive-interface {{ interface }}
+{% endfor %}
+{% endif %}
+
+{% elif routing_protocol == 'bgp' %}
+{# BGP 配置 #}
+router bgp {{ as_number }}
+{% if router_id %}
+ bgp router-id {{ router_id }}
+{% endif %}
+{% for neighbor in neighbors %}
+ neighbor {{ neighbor.ip }} remote-as {{ neighbor.remote_as }}
+{% if neighbor.description %}
+ neighbor {{ neighbor.ip }} description {{ neighbor.description }}
+{% endif %}
+{% endfor %}
+{% for network in networks %}
+ network {{ network.network }} mask {{ network.mask }}
+{% endfor %}
+
+{% elif routing_protocol == 'static' %}
+{# 静态路由配置 #}
+{% for route in static_routes %}
+ip route {{ route.network }} {{ route.mask }} {{ route.next_hop }} {% if route.distance %}{{ route.distance }}{% endif %}
+{% endfor %}
+{% endif %}
+

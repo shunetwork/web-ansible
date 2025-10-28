@@ -1,0 +1,29 @@
+---
+# 备份 Cisco 设备配置
+- name: Backup Cisco Device Configuration
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+  
+  tasks:
+    - name: Get device facts
+      ios_facts:
+        gather_subset: all
+      register: device_facts
+    
+    - name: Get running configuration
+      ios_command:
+        commands:
+          - show running-config
+      register: config_output
+    
+    - name: Save configuration to local file
+      copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: "{{ backup_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}.cfg"
+      delegate_to: localhost
+    
+    - name: Display backup result
+      debug:
+        msg: "Configuration backed up to {{ backup_dir }}/{{ inventory_hostname }}_{{ ansible_date_time.date }}.cfg"
+
